@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mo, me responde</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .option:hover {
+            background: #0056b3;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="content">
+            <div class="question" id="question">Mo, me responde:<br>Me ama?</div>
+            <div class="options">
+                <button class="option" onclick="handleAnswer('Sim')">Sim</button>
+                <button class="option" onclick="handleAnswer('Nao')">Nao</button>
+            </div>
+        </div>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        const steps = [
+            {
+                question: "Me ama?",
+                options: ["Sim", "Nao"],
+                responses: {
+                    "Sim": "Eu sei que ama, mo. Próxima pergunta: Quem você prefere?",
+                    "Nao": "Resposta errada! Tente novamente."
+                },
+                nextStep: {
+                    "Sim": 1,
+                    "Nao": null
+                }
+            },
+            {
+                question: "Quem você prefere?",
+                options: ["Luiza (meu amor, minha vida)", "Tate McRae (aff)"],
+                responses: {
+                    "Luiza (meu amor, minha vida)": "Bom mesmo. Ir para a próxima etapa.",
+                    "Tate McRae (aff)": "Casa com ela então. Voltar para escolher direito."
+                },
+                nextStep: {
+                    "Luiza (meu amor, minha vida)": 2,
+                    "Tate McRae (aff)": null
+                }
+            },
+            {
+                question: "Te amo muito, mo! Desde que você chegou, minha vida não foi mais a mesma. Vou estar sempre aqui. Te amo",
+                options: [],
+                responses: {},
+                nextStep: {}
+            }
+        ];
+
+        let currentStep = 0;
+
+        function handleAnswer(answer) {
+            const step = steps[currentStep];
+            const response = step.responses[answer] || "";
+
+            if (response) {
+                document.getElementById("message").innerText = response;
+            }
+
+            const nextStepIndex = step.nextStep[answer];
+            if (nextStepIndex !== null && nextStepIndex !== undefined) {
+                setTimeout(() => {
+                    currentStep = nextStepIndex;
+                    loadStep();
+                }, 2000);
+            }
+        }
+
+        function loadStep() {
+            const step = steps[currentStep];
+
+            document.getElementById("message").innerText = "";
+            document.getElementById("question").innerText = step.question;
+
+            const optionsContainer = document.getElementById("content");
+            optionsContainer.innerHTML = `<div class='question'>${step.question}</div>`;
+
+            if (step.options.length > 0) {
+                const optionsHtml = step.options.map(option => 
+                    `<button class='option' onclick='handleAnswer("${option}")'>${option}</button>`
+                ).join('');
+
+                optionsContainer.innerHTML += `<div class='options'>${optionsHtml}</div>`;
+            }
+        }
+
+        loadStep();
+    </script>
+</body>
+</html>
